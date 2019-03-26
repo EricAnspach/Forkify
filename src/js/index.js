@@ -7,16 +7,37 @@
 
 // console.log(`Using imported functions! ${searchView.add(searchView.ID, 2)} and ${searchView.multiply(3,5)}. ${str}`);
 
-import axios from 'axios';
+import Search from './models/Search';
 
-async function getResults(query) {
-    // const proxy = 'https://cors-anywhere.herokuapp.com/';
-    const key = '462b1cc8d4f2730081462fbc65136320';
-    // const result = await axios(`https://www.food2fork.com/api/search?key=${key}&q=chicken%20breast&page=2`);
-    const res = await axios(`https://www.food2fork.com/api/search?key=22c2a602f889a7fa0e6375367e904914&q=soup`);
-    console.log(res);
+/** Global state of the app
+ *  - Search object
+ *  - Current recipe object
+ *  - Shopping list object
+ *  - Liked recipes object
+*/
+const state = {};
+
+const controlSearch = async () => {
+    // 1) get query from view
+    const query = 'pizza'; // todo later
+
+    if(query) {
+        // 2) create new state object and add to state
+        state.search = new Search(query);
+
+        // 3) Prepare UI for results
+
+        // 4) Search for results
+        await state.search.getResults();
+
+        // 5) render results on UI
+        console.log(state.search.result);
+    }
 }
-getResults('pizza');
 
-// https://www.food2fork.com/api/search
-// 22c2a602f889a7fa0e6375367e904914
+document.querySelector('.search').addEventListener('submit', e => {
+    e.preventDefault();
+    controlSearch();
+});
+
+

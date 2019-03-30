@@ -8,6 +8,7 @@
 // console.log(`Using imported functions! ${searchView.add(searchView.ID, 2)} and ${searchView.multiply(3,5)}. ${str}`);
 
 import Search from './models/Search';
+import Recipe from './models/Recipe';
 import * as searchView from './views/searchView';
 import { elements, renderLoader, clearLoader } from './views/base';
 
@@ -19,6 +20,9 @@ import { elements, renderLoader, clearLoader } from './views/base';
 */
 const state = {};
 
+/**
+ * SEARCH CONTROLLER
+ */
 const controlSearch = async () => {
     // 1) get query from view
     const query = searchView.getInput();
@@ -55,3 +59,41 @@ elements.searchResPages.addEventListener('click', e => {
     }
 });
 
+/**
+ * RECIPE CONTROLLER
+ */
+
+ const controlRecipe = async () => {
+     // Get ID from url
+     const id = window.location.hash.replace('#', '');
+     console.log(id);
+
+     // If statement to insure that there is an ID for a recipe
+     if (id) {
+        // Prepare UI for changes
+
+
+        // Create the recipe object
+        state.recipe = new Recipe(id);
+
+        try {
+            // Get recipe data
+            await state.recipe.getRecipe();
+    
+            // Calculate servings and time
+            state.recipe.calcServings();
+            state.recipe.calcTime();
+    
+            // Render recipe
+            console.log(state.recipe);
+            
+        } catch (error) {
+            alert('Error getting recipe')
+        }
+     }
+ };
+
+// One line of code can add eventListeners to multiple events, rather than the code below
+ ['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
+//  window.addEventListener('hashchange', controlRecipe);
+//  window.addEventListener('load', controlRecipe);

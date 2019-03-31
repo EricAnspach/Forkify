@@ -10,6 +10,7 @@
 import Search from './models/Search';
 import Recipe from './models/Recipe';
 import * as searchView from './views/searchView';
+import * as recipeView from './views/recipeView';
 import { elements, renderLoader, clearLoader } from './views/base';
 
 /** Global state of the app
@@ -36,12 +37,17 @@ const controlSearch = async () => {
         searchView.clearResults();
         renderLoader(elements.searchRes);
 
-        // 4) Search for results
-        await state.search.getResults();
-
-        // 5) render results on UI
-        clearLoader();
-        searchView.renderResults(state.search.result);
+        try {
+            // 4) Search for results
+            await state.search.getResults();
+    
+            // 5) render results on UI
+            clearLoader();
+            searchView.renderResults(state.search.result);            
+        } catch (error) {
+            alert('Error with the search');
+            clearLoader();
+        }
     }
 }
 
@@ -71,21 +77,27 @@ elements.searchResPages.addEventListener('click', e => {
      // If statement to insure that there is an ID for a recipe
      if (id) {
         // Prepare UI for changes
+        recipeView.clearRecipe();
+        renderLoader(elements.recipe);
 
+        // Highlight the selected search item
+        if (state.search) searchView.highlightSelected(id);
 
         // Create the recipe object
         state.recipe = new Recipe(id);
 
         try {
-            // Get recipe data
+            // Get recipe data and parse ingredients
             await state.recipe.getRecipe();
+            state.recipe.parseIngredients();
     
             // Calculate servings and time
             state.recipe.calcServings();
             state.recipe.calcTime();
     
             // Render recipe
-            console.log(state.recipe);
+            clearLoader();
+            recipeView.renderRecipe(state.recipe);
             
         } catch (error) {
             alert('Error getting recipe')

@@ -109,3 +109,19 @@ elements.searchResPages.addEventListener('click', e => {
  ['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
 //  window.addEventListener('hashchange', controlRecipe);
 //  window.addEventListener('load', controlRecipe);
+
+// Handling recipe button clicks
+elements.recipe.addEventListener('click', e =>{
+    if (e.target.matches('.btn-decrease, .btn-decrease *')) {
+        // If decrease button is clicked
+        if (state.recipe.servings > 1) {
+            state.recipe.updateServings('dec');
+            recipeView.updateServingsIngredients(state.recipe);
+        }
+    } else if (e.target.matches('.btn-increase, .btn-increase *')) {
+        // If increase button is clicked
+        state.recipe.updateServings('inc');
+        recipeView.updateServingsIngredients(state.recipe);
+    }
+    console.log(state.recipe);
+});

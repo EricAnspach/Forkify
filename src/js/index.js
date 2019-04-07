@@ -24,7 +24,6 @@ import Likes from './models/Likes';
  *  - Liked recipes object
 */
 const state = {};
-window.state = state;
 
 /**
  * SEARCH CONTROLLER
@@ -77,7 +76,6 @@ elements.searchResPages.addEventListener('click', e => {
  const controlRecipe = async () => {
      // Get ID from url
      const id = window.location.hash.replace('#', '');
-     console.log(id);
 
      // If statement to insure that there is an ID for a recipe
      if (id) {
@@ -155,10 +153,6 @@ elements.shopping.addEventListener('click', e => {
 /**
  * LIKE CONTROLLER
  */
-// Testing
-state.likes = new Likes;
-likesView.toggleLikeMenu(state.likes.getNumLikes());
-
 const controlLike = () => {
     if (!state.likes) state.likes = new Likes;
     const currentID = state.recipe.id;
@@ -182,7 +176,7 @@ const controlLike = () => {
 
     // User has liked current recipe
     } else {
-        // Remove like fromo the state
+        // Remove like from the state
         state.likes.deleteLike(currentID);
 
         // Toggle the like button
@@ -193,7 +187,21 @@ const controlLike = () => {
     }
     likesView.toggleLikeMenu(state.likes.getNumLikes());
     
-}
+};
+
+// Restore liked recipes on page load
+window.addEventListener('load', () => {
+    state.likes = new Likes;
+
+    // Restore likes
+    state.likes.readStorage();
+
+    // Toggle like menu button
+    likesView.toggleLikeMenu(state.likes.getNumLikes());
+
+    // Render the existing likes
+    state.likes.likes.forEach(like => likesView.renderLike(like));
+});
 
 
 // Handling recipe button clicks
@@ -215,8 +223,4 @@ elements.recipe.addEventListener('click', e =>{
         // Like controller
         controlLike();
     }
-
-
 });
-
-window.l = new List();
